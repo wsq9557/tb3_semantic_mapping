@@ -89,9 +89,14 @@ class YoloV8Detector:
             self.detection_image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
             
             # 发布标签图像（改为sensor_msgs/Image）
-            label_image_msg = self.bridge.cv2_to_imgmsg(label_image, encoding="32SC1")
+            label_image_msg = self.bridge.cv2_to_imgmsg(label_image.astype(np.int32), encoding="32SC1")
             label_image_msg.header = data.header  # 记得加上header同步时间戳
+            # label_image_msg.header.stamp = data.header.stamp  # 继承原始图的时间戳
+            # label_image_msg.header.frame_id = data.header.frame_id# frame_id 也要继承，最好保持一致
             self.label_pub.publish(label_image_msg)
+
+            # 添加调试输出
+            # rospy.loginfo(f"Publishing label image with shape {label_image.shape} and {np.count_nonzero(label_image)} non-zero pixels")
 
             # 发布标签图像
             # label_msg = Int32MultiArray()

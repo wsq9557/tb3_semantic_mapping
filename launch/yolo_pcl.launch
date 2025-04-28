@@ -20,6 +20,9 @@
   <!-- 点云处理节点 -->
   <node pkg="nodelet" type="nodelet" name="label_mask"
         args="load jsk_pcl_utils/LabelToClusterPointIndices nodelet_manager">
+    <param name="approximate_sync" value="true"/>
+    <param name="queue_size" value="5"/>
+    <remap from="~source_cloud" to="/camera/depth/color/points"/>
     <remap from="~input" to="/yolov8_detector/label_image"/>
     <remap from="~output" to="/yolov8_detector/cluster_points"/>
   </node>
