@@ -1,0 +1,20 @@
+<launch>
+  <!-- TurtleBot3 基础启动 -->
+  <include file="$(find turtlebot3_bringup)/launch/turtlebot3_robot.launch"/>
+
+  <!-- 发布机器人模型 -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find turtlebot3_description)/urdf/turtlebot3_burger.urdf.xacro'"/>
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="50.0" />
+  </node>
+
+  <!-- 启动D435相机 -->
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <arg name="color_width" value="640" />
+    <arg name="color_height" value="480" />
+    <arg name="depth_width" value="640" />
+    <arg name="depth_height" value="480" />
+    <arg name="align_depth" value="true" />
+    <arg name="filters" value="pointcloud" />
+  </include>
+</launch>

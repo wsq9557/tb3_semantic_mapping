@@ -1,0 +1,28 @@
+<launch>
+  <arg name="rviz" default="true"/>
+  <arg name="localization" default="false"/>
+  <arg name="publish_detection" default="false"/>
+  <arg name="detection_db" default="/tmp/detections_dbscan.yaml"/>
+  
+  <!-- TurtleBot3 with D435 -->
+  <include file="$(find tb3_semantic_mapping)/launch/turtlebot3_d435_bringup.launch"/>
+  
+  <!-- RTAB-Map -->
+  <include file="$(find tb3_semantic_mapping)/launch/rtabmap.launch">
+    <arg name="localization" value="$(arg localization)"/>
+    <arg name="rviz" value="false"/>
+  </include>
+  
+  <!-- YOLO + 点云处理 -->
+  <include file="$(find tb3_semantic_mapping)/launch/yolo_pcl.launch"/>
+  
+  <!-- 如果启用了检测结果发布 -->
+  <node if="$(arg publish_detection)" pkg="tb3_semantic_mapping" type="detection_publisher.py" name="detection_publisher" output="screen">
+    <param name="input_file" value="$(arg detection_db)"/>
+  </node>
+  
+  <!-- RVIZ可视化 -->
+  <group if="$(arg rviz)">
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find tb3_semantic_mapping)/rviz/semantic_mapping.rviz" />
+  </group>
+</launch>
